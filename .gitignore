@@ -8,7 +8,7 @@ venv/
 *.log
 coverage
 .vscode
-shift/media/
+media/
 .pytest_cache/
 .ipython/
 .idea
