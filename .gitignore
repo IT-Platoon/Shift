@@ -1,0 +1,16 @@
+__pycache__/
+.coverage.*
+coverage.xml
+staticfiles/
+celerybeat-schedule
+.venv
+venv/
+*.log
+coverage
+.vscode
+shift/media/
+.pytest_cache/
+.ipython/
+.idea
+.env
+node_modules/
