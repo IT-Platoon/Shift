@@ -1,0 +1,93 @@
+version: '3'
+
+volumes:
+  postgres_data:
+
+services:
+  nginx:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    depends_on:
+      - django
+    ports:
+      - 80:80
+    volumes:
+      - ./server/media:/nginx/media/
+
+  django:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./server/Dockerfile
+      args:
+        MODE: "--without dev"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - REDIS_URL=${REDIS_URL}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - DJANGO_ADMIN_URL=${DJANGO_ADMIN_URL}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_EMAIL_HOST_USER=${DJANGO_EMAIL_HOST_USER}
+      - DJANGO_EMAIL_HOST_PASSWORD=${DJANGO_EMAIL_HOST_PASSWORD}
+      - CORS_ALLOWED_ORIGINS=31.129.97.140
+    ports:
+      - "8000:8000"
+    command: gunicorn config.wsgi -c ./config/gunicorn.py
+
+  postgres:
+    restart: always
+    image: postgres:14.4
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./dumps:/dumps
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+
+  redis:
+    restart: always
+    image: redis:6
+    expose:
+      - 6379
+  
+  celery_worker:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./server/Dockerfile
+      args:
+        MODE: "--without dev"
+    command: celery --app=config worker --loglevel=INFO
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - REDIS_URL=${REDIS_URL}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+
+  postgres-backup:
+    restart: always
+    image: rmiddle/pg_dump:latest
+    links:
+      - postgres
+    environment:
+      - PGUSER=${POSTGRES_USER}
+      - PGPASSWORD=${POSTGRES_PASSWORD}
+      - PGDB=${POSTGRES_DB}
+      - PGHOST=${POSTGRES_HOST}
+      - CRON_SCHEDULE=0 0 * * 0
+      - DELETE_OLDER_THAN=1
+    volumes:
+      - ./dumps:/dump
+    command: dump-cron
