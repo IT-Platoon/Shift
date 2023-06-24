@@ -13,7 +13,6 @@
         Скачать запрос
       </button>
       <div v-for="graphic of response.graphics" :key="graphic[0]">
-        
         <Bar v-if="'labels' in graphic[1]" :data="graphic[1]" />
       </div>
     </div>

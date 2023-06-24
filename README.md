@@ -11,3 +11,15 @@
 ```bash
 docker-compose up --build --remove-orphans
 ```
+
+Команда для применения миграций:
+
+```bash
+docker-compose exec django python manage.py migrate
+```
+
+Команда для создания админа (супер пользователя):
+
+```bash
+docker-compose exec django python manage.py createsuperuser
+```
