@@ -1,63 +1,82 @@
 <template>
-    <div class="d-flex">
-        <div class="col-8 m-3">
-            <p>Проект: {{ this.project?.name }}</p>
-            <div class="d-flex justify-content-between">
-                <button
+  <div class="d-flex">
+      <div class="col-8 my-3 mx-2">
+        <div class="py-3 px-4 project-body bgc d-flex justify-content-between">
+          <h5 class="mt-2">{{ this.project?.name }}</h5>
+          <div class="dropdown">
+            <button class="btn bgc" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-three-dots"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a
                   v-if="!this.isOwner"
-                  class="btn btn-danger"
+                  class="dropdown-item item"
                   @click="this.leaveFromProject"
                 >
-                    Выйти с проекта
-                </button>
-                <button
+                  Выйти с проекта
+                </a>
+              </li>
+              <li>
+                <a
                   v-if="this.isOwner"
-                  class="btn btn-secondary mx-2"
+                  class="dropdown-item item"
                   @click="this.changeModal"
                 >
-                    Редактировать проект
-                </button>
-                <button
+                  Редактировать проект
+                </a>
+              </li>
+              <li>
+                <a
                   v-if="this.isOwner"
-                  class="btn btn-danger"
+                  class="dropdown-item item"
                   @click="this.removeProject"
                 >
-                    Удалить проект
-                </button>
-            </div>
-            <div class="my-4">
-                <ListResponses
-                  :responses="this.modelResponses"
-                  @createModelProcess="this.createModelProcess"
-                />
-            </div>
+                  Удалить проект
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="col-4 my-3">
-            <ListUsersMember
-                :members="this.members"
-                :isOwner="this.isOwner"
-                :ownerId="this.ownerId"
-                @emitRemoveMember="removeMember"
+        <div class="mt-2 py-2 px-4 project-body bgc">
+          <div class="my-4">
+            <ListResponses
+              :responses="this.modelResponses"
+              @createModelProcess="this.createModelProcess"
             />
-            <div v-if="this.isOwner" class="my-3">
-                <ListUsersWantToEnter
-                  :wantToEnterUsers="this.wantToEnter"
-                  @emitAddMember="this.addMember"
-                  @emitRemoveWantToEnter="this.removeWantToEnter"
-                />
-            </div>
+          </div>
         </div>
-        <ProjectModal
-          v-if="this.project !== null"
-          v-show="this.modal"
-          :show="this.modal"
-          :project="JSON.parse(JSON.stringify(this.project))"
-          :modalName="this.modalName"
-          :buttonLabel="this.buttonLabel"
-          @changeProject="this.changeProject"
-          @close="changeModal"
-        />
-    </div>
+      </div>
+      <div class="col-4 my-3">
+          <div class="py-4 px-4 project-body bgc">
+            <ListUsersMember
+              :members="this.members"
+              :isOwner="this.isOwner"
+              :ownerId="this.ownerId"
+              @emitRemoveMember="removeMember"
+            />
+          </div>
+          <div v-if="this.isOwner" class="my-2">
+            <div class="py-4 px-4 project-body bgc">
+              <ListUsersWantToEnter
+                :wantToEnterUsers="this.wantToEnter"
+                @emitAddMember="this.addMember"
+                @emitRemoveWantToEnter="this.removeWantToEnter"
+              />
+            </div>
+          </div>
+      </div>
+      <ProjectModal
+        v-if="this.project !== null"
+        v-show="this.modal"
+        :show="this.modal"
+        :project="JSON.parse(JSON.stringify(this.project))"
+        :modalName="this.modalName"
+        :buttonLabel="this.buttonLabel"
+        @changeProject="this.changeProject"
+        @close="changeModal"
+      />
+  </div>
 </template>
 
 <script>
@@ -157,7 +176,7 @@ export default {
       }
       let response = await ProjectService.removeWantToEnter(data)
       if (response.status === 200) {
-        this.wantToEnter = response.data
+        this.wantToEnter = response.data.want_to_enter
       }
     },
     async removeMember(memberId) {
@@ -168,7 +187,7 @@ export default {
       }
       let response = await ProjectService.removeMemberFromProject(data)
       if (response.status === 200) {
-        this.members = response.data
+        this.members = response.data.members
       }
     },
     async leaveFromProject() {
@@ -257,3 +276,18 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+
+.bgc {
+  background-color: #ced4da;
+}
+
+.project-body {
+  border-radius: 10px;
+}
+
+.item {
+  cursor: pointer;
+}
+</style>

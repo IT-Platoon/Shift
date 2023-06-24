@@ -1,17 +1,19 @@
 <template>
-    <h5>Хотят присоединиться</h5>
-    <div v-if="this.wantToEnterUsers.length">
-        <UserWantToEnter
-          v-for="user of this.wantToEnterUsers"
-          :key="user.id"
-          :user="user"
-          @emitAddMember="this.addMember"
-          @emitRemoveWantToEnter="this.removeWantToEnter"
-        />
+  <h5 class="mb-4">Хотят присоединиться</h5>
+  <div v-if="this.wantToEnterUsers.length">
+    <div class="scroll-area overflow-auto">
+      <UserWantToEnter
+        v-for="user of this.wantToEnterUsers"
+        :key="user.id"
+        :user="user"
+        @emitAddMember="this.addMember"
+        @emitRemoveWantToEnter="this.removeWantToEnter"
+      />
     </div>
-    <div v-else>
-        <h6>Список пуст</h6>
-    </div>
+  </div>
+  <div v-else>
+      <h6>Список пуст</h6>
+  </div>
 </template>
 
 <script>
@@ -42,3 +44,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.scroll-area {
+  max-height: 150px;
+}
+</style>

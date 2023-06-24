@@ -1,30 +1,24 @@
 <template>
-  <div class="container">
-      <div class="input-group my-3">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Введите название проекта"
-          v-model="this.searchQuery"
-        >
-        <button
-          class="btn btn-outline-success"
-          type="button"
-          id="button-addon2"
-          @click="this.search"
-        >
-          Поиск
-        </button>
+  <div class="container py-2 px-4 mt-3">
+      <div class="bgc radius py-3 px-4">
+        <div class="input-group my-3">
+          <input
+            type="text"
+            class="form-control search"
+            placeholder="Введите название проекта"
+            @input="e => this.search(e.target.value)"
+          >
+        </div>
+        <div>
+          <button
+            @click="this.openModal"
+            class="btn btn-dark bg-black"
+          >
+            Создать проект
+          </button>
+        </div>
       </div>
-      <div>
-        <button
-          @click="this.openModal"
-          class="btn btn-success"
-        >
-          Создать проект
-        </button>
-      </div>
-      <div class="my-3">
+      <div class="my-3 bgc radius py-3 px-4">
         <ListProjects
           :projects="this.projects"
         />
@@ -88,9 +82,9 @@ export default {
       this.newProject.name = ""
       this.modal = false;
     },
-    async search() {
-      if (this.searchQuery !== "") {
-        let response = await ProjectService.searchProject(this.searchQuery)
+    async search(searchQuery) {
+      if (searchQuery !== "") {
+        let response = await ProjectService.searchProject(searchQuery)
         if (response.status === 200) {
           this.projects = response.data
         }
@@ -116,3 +110,13 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.bgc {
+  background-color: var(--bs-gray-400);
+}
+
+.radius {
+  border-radius: 10px !important;
+}
+</style>

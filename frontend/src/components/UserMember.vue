@@ -1,5 +1,5 @@
 <template>
-    <div class="card mb-2">
+    <div class="radius card mb-2">
         <div class="p-2 d-flex flex-row justify-content-between align-items-center">
             <div class="card-body">
                 <h5 class="m-0">{{ member?.username }}</h5>
@@ -48,3 +48,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.radius {
+    border-radius: 10px;
+}
+</style>

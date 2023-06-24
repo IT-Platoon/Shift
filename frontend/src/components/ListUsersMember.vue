@@ -1,13 +1,15 @@
 <template>
-    <h5>Участники</h5>
+  <h5 class="mb-4">Участники</h5>
+  <div class="scroll-area overflow-auto">
     <UserMember
-        v-for="member of this.members"
-        :key="member.id"
-        :member="member"
-        :isOwner="this.isOwner"
-        :ownerId="this.ownerId"
-        @emitRemoveMember="removeMember"
+      v-for="member of this.members"
+      :key="member.id"
+      :member="member"
+      :isOwner="this.isOwner"
+      :ownerId="this.ownerId"
+      @emitRemoveMember="removeMember"
     />
+  </div>
 </template>
 
 <script>
@@ -42,3 +44,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.scroll-area {
+  max-height: 150px;
+}
+</style>

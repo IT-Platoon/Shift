@@ -1,35 +1,37 @@
 <template>
-    <div class="card my-4">
-        <div class="card-header">
-            {{project.name}}
+  <div class="col-md-6 p-0">
+    <div class="card m-2 item-card">
+      <div class="card-header item-header">
+        <h4 class="m-0">{{project.name}}</h4>
+      </div>
+      <div class="card-body item-body">
+        <div v-if="project.consists">
+          <button
+            class="btn btn-gray"
+            @click="$router.push({name: 'project', params: {projectId: project.id}})"
+          >
+            Перейти на страницу проекта
+          </button>
         </div>
-        <div class="card-body">
-            <div v-if="project.consists">
-              <button
-                class="btn btn-success"
-                @click="$router.push({name: 'project', params: {projectId: project.id}})"
-              >
-                Перейти на страницу проекта
-              </button>
-            </div>
-            <div v-else-if="project.send_request">
-              <button
-                class="btn btn-danger"
-                @click="sendRemoveRequestToEnter"
-              >
-                Отменить запрос на вход
-              </button>
-            </div>
-            <div v-else>
-              <button
-                class="btn btn-primary"
-                @click="sendRequestToEnter"
-              >
-                Отправить запрос на вход
-              </button>
-            </div>
+        <div v-else-if="project.send_request">
+          <button
+            class="btn btn-danger"
+            @click="sendRemoveRequestToEnter"
+          >
+            Отменить запрос на вход
+          </button>
         </div>
+        <div v-else>
+          <button
+            class="btn btn-gray"
+            @click="sendRequestToEnter"
+          >
+            Отправить запрос на вход
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -59,3 +61,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.card-header.item-header {
+  background-color: var(--bs-gray-400);
+}
+.card.item-card {
+  background-color: var(--bs-white);
+}
+.btn.btn-gray {
+  background-color: var(--bs-gray-600);
+  color: var(--bs-white);
+}
+</style>

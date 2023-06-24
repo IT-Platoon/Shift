@@ -16,6 +16,7 @@ class UserSerializer(BaseModelSerializer):
             "password",
             "first_name",
             "last_name",
+            "email",
         )
 
     def create(self, validated_data: dict) -> User:

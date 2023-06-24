@@ -81,7 +81,7 @@ services:
     restart: always
     image: swaggerapi/swagger-editor
     ports:
-      - "8888:8888"
+      - "8888:8080"
 
   vue:
     build:

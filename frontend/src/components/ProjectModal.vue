@@ -16,12 +16,12 @@
               <div class="d-flex justify-content-between">
                 <button
                     @click="$emit('changeProject', project)"
-                    class="btn btn-primary"
+                    class="btn btn-light text-black"
                 >
                     {{buttonLabel}}
                 </button>
                 <button
-                  class="btn btn-danger"
+                  class="btn btn-dark text-white"
                   type="button"
                   @click="this.closeModal"
                 >
@@ -111,9 +111,9 @@ export default {
     max-width: 500px;
     margin: 1.75rem auto;
     padding: 20px 30px;
-    border-radius: 5px;
+    border-radius: 10px;
     color: #000;
-    background-color: #fff;
+    background-color: #ced4da;
     transform: translate(0, 0);
     transition: all 0.3s ease;
     box-sizing: border-box;
@@ -131,5 +131,9 @@ export default {
     justify-content: center;
     height: 80px;
     text-align: center;
+}
+
+.bgc {
+  background-color: #ced4da;
 }
 </style>

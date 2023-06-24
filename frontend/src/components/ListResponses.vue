@@ -1,23 +1,26 @@
 <template>
-    <h5>Предыдущие запросы</h5>
+  <h5 class="mb-4">Предыдущие запросы</h5>
+  <div class="my-3">
+    <label for="formFile" class="form-label">Создать запрос</label>
     <input
-      class="my-3"
-      @change="this.getFile"
+      class="form-control"
       type="file"
       id="formFile"
-    />
-    <div v-if="this.responses.length">
-        <div class="accordion accordion-flush" id="accordionFlushExample">
-            <ResponseItem
-                v-for="response of this.responses"
-                :key="response.id"
-                :response="response"
-            />
-        </div>
+      @change="this.getFile"
+    >
+  </div>
+  <div v-if="this.responses.length">
+    <div class="accordion" id="accordionFlushExample">
+      <ResponseItem
+        v-for="response of this.responses"
+        :key="response.id"
+        :response="response"
+      />
     </div>
-    <div v-else>
-        <h6>Список пуст</h6>
-    </div>
+  </div>
+  <div v-else>
+      <h6>Список пуст</h6>
+  </div>
 </template>
 
 <script>
@@ -43,6 +46,16 @@ export default {
         this.$emit("createModelProcess", e.target.files[0])
       }
     },
-  }
+  },
 };
 </script>
+
+<style scoped>
+.bgc {
+  background-color: #ced4da;
+}
+
+.request-title {
+  border-radius: 10px !important;
+}
+</style>

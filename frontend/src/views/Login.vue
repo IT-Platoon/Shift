@@ -1,5 +1,5 @@
 <template>
-  <div class="col-md-12">
+  <div class="col-md-12 d-flex flex-column align-items-center">
     <div class="card card-container">
       <img
         id="profile-img"
@@ -19,7 +19,7 @@
         </div>
 
         <div class="form-group py-2">
-          <button class="btn btn-primary btn-block" :disabled="loading">
+          <button class="btn btn-secondary btn-block" :disabled="loading">
             <span
               v-show="loading"
               class="spinner-border spinner-border-sm"
@@ -35,6 +35,7 @@
         </div>
       </Form>
     </div>
+    <img width="150" src="../assets/department.png"/>
   </div>
 </template>
 
@@ -102,6 +103,8 @@ label {
 .card-container.card {
   max-width: 350px !important;
   padding: 40px 40px;
+  background-color: #e9ecef;
+  border-radius: 10px;
 }
 
 .card {
