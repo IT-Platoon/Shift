@@ -11,6 +11,8 @@
       >
         Запрос от {{ response.created }}
       </button>
+      {{ response.graphic }}
+      {{ response.tasks }}
     </h2>
     <div
       :id="'flush-collapse' + response.id"
@@ -27,44 +29,41 @@
         Скачать запрос
       </button>
     </div>
-      <div v-for="graphic of response.graphics" :key="graphic[0]">
-        <Bar v-if="'labels' in graphic[1]" :data="graphic[1]" />
-        <div v-else>График еще не сгенерирован</div>
+    <div>
+      <div v-if="response.tasks && response.graphic && 'labels' in response.graphic">
+        <Line :data="response.graphic"/>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Код задачи</th>
+              <th scope="col">Название задачи</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="task of response.tasks" :key="task.code">
+              <th scope="row">{{ task.code }}</th>
+              <td>{{ task.name }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+      <div v-else>График еще не сгенерирован</div>
+    </div>
     </div>
   </div>
 </template>
 
 <script>
 import ModelProcessService from "../services/modelProcess.service.js";
-import { Bar } from 'vue-chartjs'
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement
-} from 'chart.js'
+import { Line } from 'vue-chartjs'
+import {Chart as ChartJS, registerables} from 'chart.js'
 
-ChartJS.register(
-  Title,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-)
+ChartJS.register(...registerables)
 
 export default {
   name: "ResponseItem",
   components: {
-    Bar,
+    Line,
   },
   props: {
     response: {

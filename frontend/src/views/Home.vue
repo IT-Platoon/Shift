@@ -78,9 +78,19 @@ export default {
           type: "success",
           duration: 5000,
         });
+        this.newProject.name = ""
+        this.modal = false;
+      } else if (response.status === 400) {
+        for (const [key, value] of Object.entries(response.data)) {
+          for (const item of value) {
+            this.$toast.open({
+              message: item,
+              type: "error",
+              duration: 10000,
+            });
+          }
+        }
       }
-      this.newProject.name = ""
-      this.modal = false;
     },
     async search(searchQuery) {
       if (searchQuery !== "") {

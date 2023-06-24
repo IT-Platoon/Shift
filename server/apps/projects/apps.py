@@ -7,3 +7,6 @@ class ProjectsConfig(AppConfig):
 
     name = 'apps.projects'
     verbose_name = _("Projects")
+
+    def ready(self) -> None:
+        import apps.projects.signals

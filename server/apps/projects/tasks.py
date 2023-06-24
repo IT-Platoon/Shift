@@ -1,10 +1,14 @@
-from apps.projects.models import ModelProcess, ModelGraphics
+import os
+
+from apps.core.services import send_email
+from apps.projects.machine_learning import main, utils
+from apps.projects.models import ModelProcess
 from config.celery import app
 
 
 @app.task
-def model_predict(model_id: int) -> None:
-    model = ModelProcess.objects.get(pk=model_id)
+def model_predict(model_id: int, email: str) -> None:
+    model = ModelProcess.objects.select_related("project").get(pk=model_id)
     graphic = {
         "labels": [
             "01 Jan 2001",
@@ -59,6 +63,18 @@ def model_predict(model_id: int) -> None:
             },
         ],
     }
-    model_graphic = ModelGraphics.objects.create(
-        model=model, graphic=graphic,
-    )
+    path = "media/" + model.request_file.name
+    response = main(path)
+    print(f"1 {response}")
+    response = main(os.path.abspath(path))
+    print(f"2 {response}")
+    model.graphic = graphic
+    model.save()
+    if email:
+        created_date = model.created.date()
+        created_time = model.created.time().replace(microsecond=0)
+        email_context = {
+            "name": model.project.name,
+            "created": f"{created_date} {created_time}",
+        }
+        send_email("info", email_context, [email])

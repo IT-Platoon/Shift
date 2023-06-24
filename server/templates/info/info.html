@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block body %}
+  {% autoescape off %}
+    <p>Привет!</p>
+    <p>
+      Ваш отчет по проекту {{name}} от {{created}} готов.
+      Увидеть его можно на странице проекта.
+    </p>
+  {% endautoescape %}
+{% endblock %}

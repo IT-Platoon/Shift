@@ -127,6 +127,16 @@ export default {
           type: "success",
           duration: 5000,
         });
+      } else if (response.status === 400) {
+        for (const [key, value] of Object.entries(response.data)) {
+          for (const item of value) {
+            this.$toast.open({
+              message: item,
+              type: "error",
+              duration: 10000,
+            });
+          }
+        }
       }
     },
     async sendRequestToEnter() {
@@ -140,6 +150,16 @@ export default {
           type: "success",
           duration: 5000,
         });
+      } else if (response.status === 400) {
+        for (const [key, value] of Object.entries(response.data)) {
+          for (const item of value) {
+            this.$toast.open({
+              message: item,
+              type: "error",
+              duration: 10000,
+            });
+          }
+        }
       }
     },
     async sendRemoveRequestToEnter() {
@@ -165,6 +185,16 @@ export default {
       if (response.status === 200) {
         this.members = response.data.members
         this.wantToEnter = response.data.want_to_enter
+      } else if (response.status === 400 || response.status === 403) {
+        for (const [key, value] of Object.entries(response.data)) {
+          for (const item of value) {
+            this.$toast.open({
+              message: item,
+              type: "error",
+              duration: 10000,
+            });
+          }
+        }
       }
     },
     async removeWantToEnter(userId) {
@@ -177,6 +207,16 @@ export default {
       let response = await ProjectService.removeWantToEnter(data)
       if (response.status === 200) {
         this.wantToEnter = response.data.want_to_enter
+      } else if (response.status === 400 || response.status === 403) {
+        for (const [key, value] of Object.entries(response.data)) {
+          for (const item of value) {
+            this.$toast.open({
+              message: item,
+              type: "error",
+              duration: 10000,
+            });
+          }
+        }
       }
     },
     async removeMember(memberId) {
@@ -188,6 +228,16 @@ export default {
       let response = await ProjectService.removeMemberFromProject(data)
       if (response.status === 200) {
         this.members = response.data.members
+      } else if (response.status === 400 || response.status === 403) {
+        for (const [key, value] of Object.entries(response.data)) {
+          for (const item of value) {
+            this.$toast.open({
+              message: item,
+              type: "error",
+              duration: 10000,
+            });
+          }
+        }
       }
     },
     async leaveFromProject() {
@@ -199,6 +249,16 @@ export default {
           type: "success",
           duration: 5000,
         });
+      } else if (response.status === 400 || response.status === 403) {
+        for (const [key, value] of Object.entries(response.data)) {
+          for (const item of value) {
+            this.$toast.open({
+              message: item,
+              type: "error",
+              duration: 10000,
+            });
+          }
+        }
       }
     },
     async removeProject() {
@@ -210,6 +270,16 @@ export default {
           type: "success",
           duration: 5000,
         });
+      } else if (response.status === 400 || response.status === 403) {
+        for (const [key, value] of Object.entries(response.data)) {
+          for (const item of value) {
+            this.$toast.open({
+              message: item,
+              type: "error",
+              duration: 10000,
+            });
+          }
+        }
       }
     },
     changeModal() {
@@ -220,19 +290,15 @@ export default {
       if (response.status === 200) {
         this.modal = false;
         this.project = response.data;
-      } else if (response.status === 400) {
-        if ("non_field_errors" in response.data) {
-          this.$toast.open({
-            message: response.data.non_field_errors,
-            type: "error",
-            duration: 5000,
-          });
-        } else {
-          this.$toast.open({
-            message: response.data.name,
-            type: "error",
-            duration: 5000,
-          });
+      } else if (response.status === 400 || response.status === 403) {
+        for (const [key, value] of Object.entries(response.data)) {
+          for (const item of value) {
+            this.$toast.open({
+              message: item,
+              type: "error",
+              duration: 10000,
+            });
+          }
         }
       }
     },

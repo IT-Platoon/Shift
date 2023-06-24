@@ -1,8 +1,8 @@
-from .model_process import ModelGraphics, ModelProcess
-from .project import Project
+from .model_process import ModelProcess
+from .project import Project, Task
 
 __all__ = (
-    ModelGraphics,
     ModelProcess,
     Project,
+    Task,
 )

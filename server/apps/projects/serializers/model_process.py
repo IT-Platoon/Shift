@@ -1,7 +1,8 @@
 from typing import Any
 
 from apps.core.serializers import BaseModelSerializer, serializers
-from apps.projects.models import ModelProcess, Project
+from apps.projects.models import ModelProcess, Project, Task
+from .project import TaskSerializer
 
 
 class ModelProcessSerializer(BaseModelSerializer):
@@ -42,8 +43,9 @@ class ModelProcessSerializer(BaseModelSerializer):
         created_date = instance.created.date()
         created_time = instance.created.time().replace(microsecond=0)
         data["created"] = f"{created_date} {created_time}"
-        data["graphics"] = instance.graphics.order_by("id").values_list(
-            'id',
-            'graphic',
-        )
+        if instance.graphic:
+            tasks = instance.graphic.pop("tasks")
+            tasks_instances = Task.objects.filter(code__in=tasks)
+            data["tasks"] = TaskSerializer(tasks_instances, many=True).data
+        data["graphic"] = instance.graphic
         return data

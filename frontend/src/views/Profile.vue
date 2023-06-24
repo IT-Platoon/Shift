@@ -1,6 +1,6 @@
 <template>
   <div class="container card profile my-3 pt-3 pb-1">
-    <h5 class="card profile-item p-2">Никнейм: {{ currentUser?.username }}</h5>
+    <h5 class="card profile-item p-2">Логин: {{ currentUser?.username }}</h5>
     <h5 class="card profile-item p-2">Имя: {{ currentUser?.first_name }}</h5>
     <h5 class="card profile-item p-2">Фамилия: {{ currentUser?.last_name }}</h5>
     <h5 class="card profile-item p-2">Email: {{ currentUser?.email }}</h5>
@@ -32,12 +32,19 @@ export default {
       return this.$store.state.auth.user;
     }
   },
+  methods: {
+    async getProjects() {
+      let response = await UserService.getUserProjects()
+      if (response?.status === 200) {
+        this.projects = response.data
+      }
+    },
+  },
   async mounted() {
     if (!this.currentUser) {
       this.$router.push('/login');
     }
-    let response = await UserService.getUserProjects()
-    this.projects = response.data
+    await this.getProjects()
   }
 };
 </script>

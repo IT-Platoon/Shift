@@ -50,12 +50,32 @@ export default {
       let response = await ProjectService.postWantEnterToProject(this.project.id);
       if (response.status === 200) {
         this.project.send_request = !this.project.send_request 
+      } else if (response.status === 400 || response.status === 403) {
+        for (const [key, value] of Object.entries(response.data)) {
+          for (const item of value) {
+            this.$toast.open({
+              message: item,
+              type: "error",
+              duration: 10000,
+            });
+          }
+        }
       }
     },
     async sendRemoveRequestToEnter() {
       let response = await ProjectService.postRemoveRequestToProject(this.project.id);
       if (response.status === 200) {
         this.project.send_request = !this.project.send_request;
+      } else if (response.status === 400 || response.status === 403) {
+        for (const [key, value] of Object.entries(response.data)) {
+          for (const item of value) {
+            this.$toast.open({
+              message: item,
+              type: "error",
+              duration: 10000,
+            });
+          }
+        }
       }
     },
   },

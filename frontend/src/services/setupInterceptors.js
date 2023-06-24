@@ -10,9 +10,6 @@ const setup = (store) => {
       }
       return config;
     },
-    // (error) => {
-    //   return Promise.reject(error);
-    // }
   );
 
   axiosInstance.interceptors.response.use(
@@ -39,12 +36,11 @@ const setup = (store) => {
             return axiosInstance(originalConfig);
           } catch (_error) {
             localStorage.clear()
-            return null;
+            return _error.response;
           }
         }
       }
-
-      return Promise.reject(err);
+      return err.response;
     }
   );
 };

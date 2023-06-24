@@ -25,10 +25,8 @@ class ModelProcessViewSet(CreateRetrieveViewSet):
         )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        models_process = ModelProcess.objects.prefetch_related(
-            "graphics",
-        ).get(pk=serializer.data["id"])
-        model_predict.delay(models_process.id)
+        models_process = ModelProcess.objects.get(pk=serializer.data["id"])
+        model_predict.delay(models_process.id, request.user.email)
         model_process_serializer = ModelProcessSerializer(
             models_process,
             context={"request": request},

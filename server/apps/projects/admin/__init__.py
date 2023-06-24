@@ -1,8 +1,8 @@
-from .model_process import ModelProcessAdmin, ModelGraphicsAdmin
-from .project import ProjectAdmin
+from .model_process import ModelProcessAdmin
+from .project import ProjectAdmin, TaskAdmin
 
 __all__ = (
     ProjectAdmin,
     ModelProcessAdmin,
-    ModelGraphicsAdmin,
+    TaskAdmin,
 )

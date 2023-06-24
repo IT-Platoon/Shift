@@ -30,6 +30,11 @@ class ModelProcess(BaseModel):
         related_name="responses",
         verbose_name="Analyzed project",
     )
+    graphic = models.JSONField(
+        null=True,
+        blank=True,
+        verbose_name="Model response",
+    )
 
     class Meta:
         verbose_name = "Информация о модели"
@@ -37,22 +42,3 @@ class ModelProcess(BaseModel):
 
     def __str__(self) -> str:
         return f"ModelProcess for project {self.project}"
-
-
-class ModelGraphics(models.Model):
-    model = models.ForeignKey(
-        ModelProcess,
-        on_delete=models.CASCADE,
-        related_name="graphics",
-        verbose_name="Model, that computing this request",
-    )
-    graphic = models.JSONField(
-        verbose_name="Model response",
-    )
-
-    class Meta:
-        verbose_name = "График"
-        verbose_name_plural = "Графики"
-
-    def __str__(self) -> str:
-        return f"ModelGraphics for model {self.model}"
