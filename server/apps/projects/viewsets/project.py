@@ -155,12 +155,9 @@ class ProjectViewSet(BaseViewSet):
                 project.want_to_enter.all(),
                 many=True,
             ).data
-            response = {
-                "want_to_enter": want_to_enter,
-            }
             return Response(
                 status=status.HTTP_200_OK,
-                data=response,
+                data=want_to_enter,
             )
         message = "Отклонить заявку может только владелец проекта."
         return Response(
@@ -223,12 +220,9 @@ class ProjectViewSet(BaseViewSet):
             user = User.objects.get(id=serializer.data["user"])
             project.members.remove(user)
             members = UserSerializer(project.members.all(), many=True).data
-            response = {
-                "members": members,
-            }
             return Response(
                 status=status.HTTP_200_OK,
-                data=response,
+                data=members,
             )
         message = "Исключить пользователя может только владелец проекта."
         return Response(

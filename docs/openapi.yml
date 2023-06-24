@@ -1,7 +1,7 @@
 openapi: 3.0.2
 
 info:
-  title: shift
+  title: Shift
   version: 0.1.0
 
 tags:
@@ -9,6 +9,10 @@ tags:
     description: "Auth namespace"
   - name: users
     description: "Users namespace"
+  - name: model-processes
+    description: "ModelProcess namespace"
+  - name: projects
+    description: "Projects namespace"
 
 paths:
   "/api/token/":
@@ -53,36 +57,393 @@ paths:
           description: "Unauthorized"
 
   "/api/users/":
-    get:
+    post:
       tags:
         - users
-      summary: "Get users list"
-      security:
-        - bearerAuth: []
+      summary: "Create user"
+      requestBody:
+        $ref: "#/components/requestBodies/UserCreateBody"
       responses:
         "200":
-          $ref: "#/components/responses/UserList200"
+          $ref: "#/components/responses/User201"
+        "400":
+          $ref: "#/components/responses/User400"
+  
+  "/api/model-process/":
+    post:
+      tags:
+        - model-processes
+      summary: "Create ModelProcess"
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/ModelProcessCreateBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/ModelProcess201"
+        "400":
+          $ref: "#/components/responses/ModelProcess400"
         "401":
           description: "Unauthorized"
-
-  "/api/users/{user_id}/":
+        "404":
+          description: "Project not found"
+  
+  "/api/model-process/{model_id}/":
     get:
       tags:
-        - users
-      summary: "Get user info"
+        - model-processes
+      summary: "Download info about ModelProcess"
       parameters:
-        - name: user_id
+        - name: model_id
           in: path
           schema:
             type: number
+          description: "Id запроса к модели"
           required: true
       security:
         - bearerAuth: []
       responses:
         "200":
-          $ref: "#/components/responses/User200"
+          $ref: "#/components/responses/ModelProcessDownload200"
         "401":
           description: "Unauthorized"
+        "404":
+          description: "Not found"
+
+  "/api/projects/":
+    post:
+      tags:
+        - projects
+      summary: "Create projects"
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/ProjectCreateBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/Project201"
+        "400":
+          $ref: "#/components/responses/Project400"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+
+    get:
+      tags:
+        - projects
+      summary: "Get list projects"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+            nullable: true
+          description: "Название проекта"
+          required: false
+      responses:
+        "200":
+          $ref: "#/components/responses/ProjectList200"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+
+  "/api/projects/{project_id}/":
+    get:
+      tags:
+        - projects
+      summary: "Get project"
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: number
+          description: "Id проекта"
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/Project200"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Not Found"
+
+    patch:
+      tags:
+        - projects
+      summary: "Update project"
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: number
+          description: "Id проекта"
+          required: true
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/ProjectCreateBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/Project200"
+        "400":
+          $ref: "#/components/responses/Project400"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Not Found"
+
+    delete:
+      tags:
+        - projects
+      summary: "Delete project"
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: number
+          description: "Id проекта"
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: "No Content"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Not Found"
+
+  "/api/projects/{project_id}/get-want-enter/":
+    get:
+      tags:
+        - projects
+      summary: "Get want to enter to project users"
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: number
+          description: "Id проекта"
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/UserList200"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          $ref: "#/components/responses/GetWantEnter403"
+        "404":
+          description: "Not Found"
+
+  "/api/projects/{project_id}/get-members/":
+    get:
+      tags:
+        - projects
+      summary: "Get members of project users"
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: number
+          description: "Id проекта"
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/UserList200"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Not Found"
+
+  "/api/projects/{project_id}/want-enter/":
+    post:
+      tags:
+        - projects
+      summary: "Create request to enter in project"
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: number
+          description: "Id проекта"
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/WantEnter200"
+        "400":
+          $ref: "#/components/responses/WantEnter400"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Not Found"
+
+
+  "/api/projects/{project_id}/cancel-want-enter/":
+    post:
+      tags:
+        - projects
+      summary: "Cancel request to enter in project"
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: number
+          description: "Id проекта"
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/CancelWantEnter200"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Not Found"
+
+  "/api/projects/remove-want-enter/":
+    post:
+      tags:
+        - projects
+      summary: "Remove request to enter in project by owner"
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/MemberProjectBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/RemoveWantEnter200"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          $ref: "#/components/responses/RemoveWantEnter403"
+        "404":
+          description: "Not Found"
+
+  "/api/projects/add-member/":
+    post:
+      tags:
+        - projects
+      summary: "Add member to project by owner"
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/MemberProjectBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/AddMember200"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          $ref: "#/components/responses/AddMember403"
+        "404":
+          description: "Not Found"
+  
+  "/api/projects/remove-member/":
+    post:
+      tags:
+        - projects
+      summary: "Remove member to project by owner"
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/MemberProjectBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/RemoveMember200"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          $ref: "#/components/responses/RemoveMember403"
+        "404":
+          description: "Not Found"
+    
+  "/api/projects/{project_id}/leave-project/":
+    post:
+      tags:
+        - projects
+      summary: "Leave from project by member"
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: number
+          description: "Id проекта"
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/LeaveProject200"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          $ref: "#/components/responses/LeaveProject403"
+        "404":
+          description: "Not Found"
+
+  "/api/projects/{project_id}/responses/":
+    get:
+      tags:
+        - projects
+      summary: "Get model-processes of this project"
+      parameters:
+        - name: project_id
+          in: path
+          schema:
+            type: number
+          description: "Id проекта"
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/ModelProcessList200"
+        "400":
+          description: "Bad requeset"
+        "401":
+          description: "Unauthorized"
+        "403":
+          $ref: "#/components/responses/ModelProcessList403"
+        "404":
+          description: "Not Found"
 
 components:
   securitySchemes:
@@ -103,6 +464,111 @@ components:
           type: string
         username:
           type: string
+
+    UserCreate:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+
+    ModelProcessCreate:
+      type: object
+      properties:
+        project:
+          type: number
+          description: "Id проекта"
+        request_file:
+          type: string
+          description: "File to upload"
+    
+    GraphicBase:
+      type: object
+      properties:
+        labels:
+          type: array
+          items:
+            type: string
+            description: "Названия значений по оси X"
+        datasets:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+                description: "Название графика"
+              type:
+                type: string
+                description: "Тип графика"
+              data:
+                type: array
+                items:
+                  type: number
+    
+    ModelResponseBase:
+      type: object
+      properties:
+        id:
+          type: number
+        project:
+          type: number
+          description: "Id проекта"
+        request_file:
+          type: string
+          description: "File to upload"
+        created:
+          type: string
+          format: date-time
+        graphics:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              graphic:
+                $ref: "#/components/schemas/GraphicBase"
+    
+    ModelProcessDownload:
+      description: "Загруженный файл, при создании запроса"
+      type: object
+    
+    ProjectCreate:
+      type: object
+      properties:
+        name:
+          type: string
+    
+    ProjectBase:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        owner:
+          type: number
+        consists:
+          type: boolean
+        send_request:
+          type: boolean
+    
+    MemberProject:
+      type: object
+      properties:
+        user:
+          type: number
+        project:
+          type: number
+        action:
+          type: string
+          description: "ADD/REMOVE/REMOVE_WANT_ENTER"
 
   requestBodies:
     TokenPairRequestBody:
@@ -127,6 +593,34 @@ components:
                 type: string
       required: true
 
+    UserCreateBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UserCreate"
+      required: true
+  
+    ModelProcessCreateBody:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/ModelProcessCreate"
+      required: true
+    
+    ProjectCreateBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProjectCreate"
+      required: true
+    
+    MemberProjectBody:
+      content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemberProject"
+      required: true
+
   responses:
     UserList200:
       description: "User list"
@@ -143,6 +637,223 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/UserBase"
+    
+    User201:
+      description: "User create success"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UserBase"
+    
+    User400:
+      description: "User create failed"
+    
+    ModelProcess201:
+      description: "Model process create success"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              model_process:
+                $ref: "#/components/schemas/ModelResponseBase"
+              message:
+                description: "Данные загружены. Ожидайте результатов."
+    
+    ModelProcess400:
+      description: "Model process create failed"
+    
+    ModelProcessDownload200:
+      description: "Download file that, load after create ModelProcess"
+      content:
+        application/x-gzip:
+          schema:
+            $ref: '#/components/schemas/ModelProcessDownload'
+    
+    Project201:
+      description: "Project create success"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              project:
+                $ref: "#/components/schemas/ProjectBase"
+              message:
+                type: string
+                description: "Проект успешно создан."
+
+    Project400:
+      description: "Project create failed"
+    
+    ProjectList200:
+      description: "List of project"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/ProjectBase"
+      
+    Project200:
+      description: "Project info"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProjectBase"
+    
+    GetWantEnter403:
+      description: "Forbidden"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Только владелец может увидеть тех, кто хочет вступить."
+
+    WantEnter200:
+      description: "Success"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Заявка на вступление в проект отправлена."
+
+    WantEnter400:
+      description: "Bad request"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Вы уже состоите в проекте."
+
+    CancelWantEnter200:
+      description: "Success"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Вы отменили заявку на вступление в проект."
+    
+    RemoveWantEnter200:
+      description: "Success"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/UserBase"
+  
+    RemoveWantEnter403:
+      description: "Forbidden"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Отклонить заявку может только владелец проекта."
+
+    AddMember200:
+      description: "Success"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              want_to_enter:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserBase"
+              members:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserBase"
+
+    AddMember403:
+      description: "Forbidden"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Принять заявку может только владелец проекта."
+
+    RemoveMember200:
+      description: "Success"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/UserBase"
+
+    RemoveMember403:
+      description: "Forbidden"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Исключить пользователя может только владелец проекта."
+    
+    LeaveProject200:
+      description: "Success"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Вы успешно вышли с проекта."
+
+    LeaveProject403:
+      description: "Forbidden"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Владелец не может выйти с проекта."
+
+    ModelProcessList200:
+      description: "Success"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/ModelResponseBase"
+
+    ModelProcessList403:
+      description: "Forbidden"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Только участники проекта имеют доступ к материалам на проекте."
 
     TokenObtain200:
       description: "Success"

@@ -57,5 +57,4 @@ class ModelProcessViewSet(CreateRetrieveViewSet):
                 f'attachment; filename="{filename}"'
             )
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-            print(response)
             return response
