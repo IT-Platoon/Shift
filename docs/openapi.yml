@@ -524,15 +524,8 @@ components:
         created:
           type: string
           format: date-time
-        graphics:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: number
-              graphic:
-                $ref: "#/components/schemas/GraphicBase"
+        graphic:
+          $ref: "#/components/schemas/GraphicBase"
     
     ModelProcessDownload:
       description: "Загруженный файл, при создании запроса"

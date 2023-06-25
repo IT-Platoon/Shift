@@ -97,7 +97,7 @@ def get_tasks_and_names_json(tasks: pd.Series, names: pd.Series) -> dict:
 
 
 def save_predictions_to_txt(predictions: pd.Series,
-                            filename: str = 'shift_predictions') -> None:
+                            filename: str = 'shift_predictions.txt') -> None:
     """
     Сохранение предсказаний в txt файл
 
@@ -122,6 +122,42 @@ def get_report_dataframe(df: pd.DataFrame, columns: list) -> pd.DataFrame:
     return df[columns]
 
 
+def save_dataframe_xlsx(df: pd.DataFrame,
+                        filename: str = 'report.xlsx') -> None:
+    """
+    Сохранение фрейма данных в файл с расширением .xlsx
+
+    :param df: Фрейм данных pandas
+    :param filename: Название файла сохранения
+    :return: None
+    """
+    report = get_report_dataframe(df,
+                                  ['Кодзадачи', 'НазваниеЗадачи', 'predictions'])
+    report = report.rename(columns={
+        "predictions": "Кол-во дней",
+        "НазваниеЗадачи": "Название задачи",
+    })
+    report.to_excel(excel_writer=filename, index=False)
+
+
+def save_dataframe_csv(df: pd.DataFrame,
+                       filename: str = 'report.csv') -> None:
+    """
+    Сохранение фрейма данных в файл с расширением .csv
+
+    :param df: Фрейм данных pandas
+    :param filename: Название файла сохранения
+    :return: None
+    """
+    report = get_report_dataframe(df,
+                                  ['Кодзадачи', 'НазваниеЗадачи', 'predictions'])
+    report = report.rename(columns={
+        "predictions": "Кол-во дней",
+        "НазваниеЗадачи": "Название задачи",
+    })
+    report.to_csv(path_or_buf=filename, sep=';', index=False)
+
+
 def preprocessing_data_shift(df: pd.DataFrame) -> pd.DataFrame:
     """
     Обработка фрейма данных для использования в модели
@@ -141,7 +177,7 @@ def preprocessing_data_shift(df: pd.DataFrame) -> pd.DataFrame:
         "Статуспоэкспертизе": "statusExperts",
         "Экспертиза": "expert",
     })
-    df = df.assign(date_report='2023-01-17')
+    df = df.assign(date_report='2023.06.19')
 
     df['dateStartWork'] = pd.to_datetime(df['dateStartWork'])
     df['dateEndWork'] = pd.to_datetime(df['dateEndWork'])

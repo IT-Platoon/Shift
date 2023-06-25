@@ -19,23 +19,8 @@
       data-bs-parent="#accordionFlushExample"
     >
     <div class="text-center">
-      <div v-if="this.response.graphic  && 'labels' in this.response.graphic">
+      <div v-if="this.response.graphic && 'labels' in this.response.graphic">
         <Line :data="this.response.graphic"/>
-        <!-- <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Код задачи</th>
-              <th scope="col">Название задачи</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="task of this.response.tasks" :key="task.code">
-              {{ task }}
-              <th scope="row">{{ task.code }}</th>
-              <td>{{ task.name }}</td>
-            </tr>
-          </tbody>
-        </table> -->
       </div>
       <div class="text-center" v-else>График еще не сгенерирован</div>
     </div>

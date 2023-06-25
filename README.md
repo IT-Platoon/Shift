@@ -13,6 +13,8 @@
 
 Для запуска проекта требуется установленный docker-compose.
 
+## DEV
+
 Команда для запуска:
 
 ```bash
@@ -31,10 +33,12 @@ docker-compose exec django python manage.py migrate
 docker-compose exec django python manage.py createsuperuser
 ```
 
+## PROD
+
 Команда для запуска prod версии:
 
 ```bash
-docker-compose -f docker-compose.prod.yml --build --remove-orphans
+docker-compose -f docker-compose.prod.yml up --build --remove-orphans
 ```
 
 Команда для применения миграций:
