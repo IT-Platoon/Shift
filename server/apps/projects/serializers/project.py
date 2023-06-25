@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from apps.core.serializers import BaseModelSerializer, serializers
-from apps.projects.models import Project, Task
+from apps.projects.models import Project
 
 
 class ProjectSerializer(BaseModelSerializer):
@@ -76,13 +76,3 @@ class ProjectMemberSerializer(serializers.Serializer):
                         "User not in list of want to enter of project",
                     )
         return validated_data
-
-
-class TaskSerializer(BaseModelSerializer):
-
-    class Meta:
-        model = Task
-        fields = (
-            "code",
-            "name",
-        )

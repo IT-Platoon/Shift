@@ -33,14 +33,16 @@ def main(data_path):
     ).astype('Int64')
     save_dataframe_xlsx(
         data_with_predict,
-        filename='test_predictions.xlsx',
+        filename='../test_predictions.xlsx',
     )
     save_dataframe_csv(
         data_with_predict,
-        filename='test_predictions.csv',
+        filename='../test_predictions.csv',
     )
     save_predictions_to_txt(
-        data_with_predict['predictions'], filename='test_predictions.txt')
+        data_with_predict['predictions'],
+        filename='../test_predictions.txt',
+    )
     return ended_json
 
 

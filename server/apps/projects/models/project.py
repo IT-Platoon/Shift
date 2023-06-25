@@ -31,21 +31,3 @@ class Project(models.Model):
 
     def __str__(self) -> str:
         return f"Project {self.name}"
-
-
-class Task(models.Model):
-    code = models.CharField(
-        max_length=16,
-        verbose_name="Код задачи",
-    )
-    name = models.CharField(
-        max_length=256,
-        verbose_name="Код задачи",
-    )
-
-    class Meta:
-        verbose_name = "Задача"
-        verbose_name_plural = "Задачи"
-
-    def __str__(self) -> str:
-        return f"Task {self.code} {self.name}"

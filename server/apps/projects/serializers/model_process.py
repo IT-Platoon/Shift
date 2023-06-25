@@ -1,8 +1,7 @@
 from typing import Any
 
 from apps.core.serializers import BaseModelSerializer, serializers
-from apps.projects.models import ModelProcess, Project, Task
-from .project import TaskSerializer
+from apps.projects.models import ModelProcess, Project
 
 
 class ModelProcessSerializer(BaseModelSerializer):
