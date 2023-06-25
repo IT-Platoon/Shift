@@ -26,8 +26,8 @@ services:
     depends_on:
       - postgres
       - redis
-    # volumes:
-    #   - ./server:/server
+    volumes:
+      - ./server:/server
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
       - REDIS_URL=${REDIS_URL}
@@ -72,8 +72,8 @@ services:
     depends_on:
       - postgres
       - redis
-    # volumes:
-    #   - ./server:/server
+    volumes:
+      - ./server:/server
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
       - REDIS_URL=${REDIS_URL}
