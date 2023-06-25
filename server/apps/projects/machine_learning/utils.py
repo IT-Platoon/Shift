@@ -2,12 +2,12 @@
 
 import json
 from pathlib import Path
-from typing import Optional, Union, Callable
+from typing import Optional, Union, Callable, Hashable
 
 import pandas as pd
 
 
-def check_path(file_path: Union[str, Path]):
+def check_path(file_path: Union[str, Path]) -> bool:
     """
     Проверка существования файла
 
@@ -17,10 +17,98 @@ def check_path(file_path: Union[str, Path]):
     return Path(file_path).exists()
 
 
-def dataframe_to_json(data: pd.DataFrame) -> json:
-    """ Преобразование dataframe в json-формат.
-    data: DataFrame - таблица данных.
-    return: json """
+def dataframe_to_json(df: pd.DataFrame) -> dict:
+    """
+    Преобразование фрейма данных с предсказаниями в json-формат для
+    отображения графиков
+
+    :param df: Фрейм данных pandas
+    :return: json-строка, содержащая в себе информацию для вывод информации
+             о графиках
+    """
+    to_json = {'labels': df['Кодзадачи'].tolist(),
+               'datasets': [{'data': df['target'].tolist(),
+                             'label': 'Срок выполнения',
+                             'type': 'line',
+                             },
+                            {'data': df['predictions'].tolist(),
+                             'label': 'Предсказания сдвига',
+                             'type': 'line',
+                             }]
+               }
+    return to_json
+
+
+def is_jsonable(x) -> bool:
+    """
+    Проверка объекта на возможность сериализации
+
+    :param x: Объект для проверки
+    :return: True, если объект можно сериализовать. Иначе False
+    """
+    try:
+        json.dumps(x)
+        return True
+    except (TypeError, OverflowError):
+        return False
+
+
+def get_columns_json(kv: dict[str, pd.Series]) -> json:
+    """
+    Преобразование словаря в json-строку
+
+    :param kv: Словарь для преобразования
+    :return: json-представление словаря
+    """
+    to_json = {}
+    for key, value in kv.items():
+        value = value.tolist()
+        if isinstance(key, Hashable) and is_jsonable(value):
+            to_json[key] = value
+    json_str = json.dumps(to_json)
+    return json_str
+
+
+def get_column_json(key: str, value: pd.Series) -> json:
+    """
+    Создание json-строки из одного объекта Series
+
+    :param key: Ключ к json-представлению объекта
+    :param value: Объект Series
+    :return: json-строка, содержащая объект
+    """
+    pred_lst = value.tolist()
+    to_json = {key: pred_lst}
+    json_str = json.dumps(to_json)
+    return json_str
+
+
+def get_tasks_and_names_json(tasks: pd.Series, names: pd.Series) -> dict:
+    """
+    Форматирование кодов задач и их названий из Series в dict
+
+    :param tasks: Коды задач в виде Series
+    :param names: Названия задач в виде Series
+    :return: dict с кодами задач и их названиями
+    """
+    tasks_lst, names_lst = tasks.tolist(), names.to_list()
+    to_json = {'task_codes': tasks_lst, 'task_names': names_lst}
+    return to_json
+
+
+def save_predictions_to_txt(predictions: pd.Series,
+                            filename: str = 'shift_predictions') -> None:
+    """
+    Сохранение предсказаний в txt файл
+
+    :param predictions: Результаты работы модели
+    :param filename: Название файла, в который нужно сохранить результаты
+    :return: None
+    """
+    pred_list = predictions.tolist()
+    with open(filename, 'w', encoding='utf-8') as file:
+        for prediction in pred_list:
+            file.write(str(prediction) + '\n')
 
 
 def get_report_dataframe(df: pd.DataFrame, columns: list) -> pd.DataFrame:
@@ -53,6 +141,7 @@ def preprocessing_data_shift(df: pd.DataFrame) -> pd.DataFrame:
         "Статуспоэкспертизе": "statusExperts",
         "Экспертиза": "expert",
     })
+    df = df.assign(date_report='2023-01-17')
 
     df['dateStartWork'] = pd.to_datetime(df['dateStartWork'])
     df['dateEndWork'] = pd.to_datetime(df['dateEndWork'])
@@ -67,12 +156,14 @@ def preprocessing_data_shift(df: pd.DataFrame) -> pd.DataFrame:
     lst = []
     for index, row in df.iterrows():
         shift = row['dateEndWork'] - row['dateStartWork']
-        lst.append(shift.days)
-    df['target'] = lst
+        if not isinstance(shift, int):
+            lst.append(shift.days)
+        else:
+            lst.append(0)
 
-    df = df.drop(columns=['dateEndWork', 'Unnamed: 0'])
-    df = df[['obj_key', 'codeTask', 'nameTask', 'percent']]
-    return df
+    df = df.drop(columns=['dateEndWork', 'obj_shortName'])
+    # df = df[['obj_key', 'codeTask', 'nameTask', 'percent']]
+    return df, lst
 
 
 def load_data(path: Union[str, Path]) -> pd.DataFrame:
@@ -85,10 +176,12 @@ def load_data(path: Union[str, Path]) -> pd.DataFrame:
     if not check_path(path):
         raise FileNotFoundError('Неверный путь файла с данными')
     file_extension = str(path).split('\\')[-1].split('.')[-1]
-    if file_extension in ['csv']:
+    if file_extension == 'csv':
         data = load_csv(path)
-    elif file_extension in ['xls', 'xlsx']:
-        data = load_excel(path)
+    elif file_extension == 'xls':
+        data = load_xls(path)
+    elif file_extension == 'xlsx':
+        data = load_xlsx(path)
     else:
         raise ValueError('Неверное расширение файла')
     return data
@@ -122,18 +215,32 @@ def load_csv(file_path: Union[str, Path],
     return df
 
 
-def load_excel(file_path: Union[str, Path],
-               sheet_name: Optional[Union[str, int, list]] = None) -> pd.DataFrame:
+def load_xls(file_path: Union[str, Path]) -> pd.DataFrame:
     """
     Загрузка excel-файла и его преобразование в фрейм данных.
 
+    Работа функции затрагивает только 1-й лист файла
+
     :param file_path: Путь до excel-файла
-    :param sheet_name: Название необходимых листов
     :return: Фрейм данных pandas
     """
     df = pd.read_excel(
         io=file_path,
-        sheet_name=sheet_name,
-        engine="openpyxl",
+    )
+    return df
+
+
+def load_xlsx(file_path: Union[str, Path]) -> pd.DataFrame:
+    """
+    Загрузка excel-файла и его преобразование в фрейм данных.
+
+    Работа функции затрагивает только 1-й лист файла
+
+    :param file_path: Путь до excel-файла
+    :return: Фрейм данных pandas
+    """
+    df = pd.read_excel(
+        io=file_path,
+        engine='openpyxl',
     )
     return df

@@ -11,8 +11,6 @@
       >
         Запрос от {{ response.created }}
       </button>
-      {{ response.graphic }}
-      {{ response.tasks }}
     </h2>
     <div
       :id="'flush-collapse' + response.id"
@@ -20,19 +18,10 @@
       aria-labelledby="flush-headingOne"
       data-bs-parent="#accordionFlushExample"
     >
-    <div class="my-3 d-flex justify-content-around">
-      <button
-        class="btn bgc"
-        @click="downloadRequest"
-      >
-      <i class="bi bi-download"></i>
-        Скачать запрос
-      </button>
-    </div>
-    <div>
-      <div v-if="response.tasks && response.graphic && 'labels' in response.graphic">
-        <Line :data="response.graphic"/>
-        <table class="table">
+    <div class="text-center">
+      <div v-if="this.response.graphic  && 'labels' in this.response.graphic">
+        <Line :data="this.response.graphic"/>
+        <!-- <table class="table">
           <thead>
             <tr>
               <th scope="col">Код задачи</th>
@@ -40,21 +29,21 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="task of response.tasks" :key="task.code">
+            <tr v-for="task of this.response.tasks" :key="task.code">
+              {{ task }}
               <th scope="row">{{ task.code }}</th>
               <td>{{ task.name }}</td>
             </tr>
           </tbody>
-        </table>
+        </table> -->
       </div>
-      <div v-else>График еще не сгенерирован</div>
+      <div class="text-center" v-else>График еще не сгенерирован</div>
     </div>
     </div>
   </div>
 </template>
 
 <script>
-import ModelProcessService from "../services/modelProcess.service.js";
 import { Line } from 'vue-chartjs'
 import {Chart as ChartJS, registerables} from 'chart.js'
 
@@ -71,11 +60,16 @@ export default {
       required: true,
     },
   },
-  methods: {
-    async downloadRequest() {
-      await ModelProcessService.getModelProcessFile(this.response.id)
-    },
+  data() {
+    return {
+      data: {},
+      condition: false,
+    }
   },
+  mounted() {
+    this.condition = this.response.graphic  && 'labels' in this.response.graphic
+    this.data = this.response.graphic 
+  }
 };
 </script>
 

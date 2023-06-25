@@ -82,7 +82,7 @@ export default {
         .string(),
       email: yup
         .string()
-        .required("Email обязательна!")
+        .required("Email обязателен!")
         .email("Email имеет не верный формат!")
         .max(50, "Максимальная длина - 50 символов!"),
       password: yup

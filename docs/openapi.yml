@@ -104,30 +104,6 @@ paths:
           description: "Unauthorized"
         "404":
           description: "Project not found"
-  
-  "/api/model-process/{model_id}/":
-    get:
-      tags:
-        - model-processes
-      summary: "Download info about ModelProcess"
-      parameters:
-        - name: model_id
-          in: path
-          schema:
-            type: number
-          description: "Id запроса к модели"
-          required: true
-      security:
-        - JWT: []
-      responses:
-        "200":
-          $ref: "#/components/responses/ModelProcessDownload200"
-        "400":
-          description: "Bad request"
-        "401":
-          description: "Unauthorized"
-        "404":
-          description: "Not found"
 
   "/api/projects/":
     post:
@@ -685,13 +661,6 @@ components:
     
     ModelProcess400:
       description: "Model process create failed"
-    
-    ModelProcessDownload200:
-      description: "Download file that, load after create ModelProcess"
-      content:
-        application/x-gzip:
-          schema:
-            $ref: '#/components/schemas/ModelProcessDownload'
     
     Project201:
       description: "Project create success"

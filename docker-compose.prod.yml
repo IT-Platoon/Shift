@@ -11,11 +11,6 @@ services:
       dockerfile: ./nginx/Dockerfile
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-      - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
-      - DJANGO_EMAIL_HOST=${DJANGO_EMAIL_HOST}
-      - DJANGO_EMAIL_PORT=${DJANGO_EMAIL_PORT}
-      - DJANGO_EMAIL_HOST_USER=${DJANGO_EMAIL_HOST_USER}
-      - DJANGO_EMAIL_HOST_PASSWORD=${DJANGO_EMAIL_HOST_PASSWORD}
     depends_on:
       - django
     ports:
@@ -31,6 +26,8 @@ services:
     depends_on:
       - postgres
       - redis
+    # volumes:
+    #   - ./server:/server
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
       - REDIS_URL=${REDIS_URL}
@@ -75,6 +72,8 @@ services:
     depends_on:
       - postgres
       - redis
+    # volumes:
+    #   - ./server:/server
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
       - REDIS_URL=${REDIS_URL}

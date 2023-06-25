@@ -39,20 +39,3 @@ class ModelProcessViewSet(CreateRetrieveViewSet):
             data=response,
             status=status.HTTP_201_CREATED,
         )
-
-    def retrieve(self, request, *args, **kwargs):
-        model_process = get_object_or_404(
-            ModelProcess,
-            id=self.kwargs["pk"],
-        )
-        path_to_file = "media/" + model_process.request_file.name
-        with open(path_to_file) as file_obj:
-            filename = file_obj.name[file_obj.name.rfind("/")+1:]
-            file_to_send = ContentFile(file_obj.read())
-            response = HttpResponse(file_to_send, 'application/x-gzip')
-            response['Content-Length'] = file_to_send.size
-            response['Content-Disposition'] = (
-                f'attachment; filename="{filename}"'
-            )
-            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-            return response

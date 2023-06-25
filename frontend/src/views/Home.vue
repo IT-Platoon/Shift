@@ -5,7 +5,7 @@
           <input
             type="text"
             class="form-control search"
-            placeholder="Введите название проекта"
+            placeholder="Введите название проекта для поиска"
             @input="e => this.search(e.target.value)"
           >
         </div>

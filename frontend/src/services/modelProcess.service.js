@@ -14,26 +14,6 @@ class ModelProcessService {
       },
     );
   }
-
-  getModelProcessFile(modelProcessId) {
-    return api.get(
-      `${this.baseUrl}${modelProcessId}/`,
-      {
-        responseType: 'arraybuffer',
-        headers: {
-          "Content-Type": "application/x-gzip",
-        },
-      },
-    ).then((response) => {
-      console.log(response)
-      let blob = new Blob(
-        [response.data],
-        { type: 'application/vnd.ms-excel' }
-      )
-      let url = window.URL.createObjectURL(blob)
-      window.open(url);
-    });
-  }
 }
 
 export default new ModelProcessService();

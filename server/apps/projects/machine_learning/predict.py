@@ -18,7 +18,7 @@ def predict_result_regression(path_to_model: Union[str, Path], path_to_data: Uni
     """
     data = load_data(path_to_data)
 
-    preprocessed_data = preprocessing_data_shift(data)
+    preprocessed_data, lst = preprocessing_data_shift(data)
 
     model = load_model_pycaret_regression(path_to_model)
 
@@ -26,4 +26,6 @@ def predict_result_regression(path_to_model: Union[str, Path], path_to_data: Uni
     predictions = reg_predict(preprocessed_data, model).astype(int)
 
     data.insert(len(data.columns), 'predictions', predictions)
+    data['predictions'] = data['predictions'].apply(lambda x: max(0, x))
+    data['target'] = lst
     return data

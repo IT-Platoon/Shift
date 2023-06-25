@@ -43,9 +43,5 @@ class ModelProcessSerializer(BaseModelSerializer):
         created_date = instance.created.date()
         created_time = instance.created.time().replace(microsecond=0)
         data["created"] = f"{created_date} {created_time}"
-        if instance.graphic:
-            tasks = instance.graphic.pop("tasks")
-            tasks_instances = Task.objects.filter(code__in=tasks)
-            data["tasks"] = TaskSerializer(tasks_instances, many=True).data
         data["graphic"] = instance.graphic
         return data
